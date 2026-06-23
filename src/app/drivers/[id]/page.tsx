@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import { teamColor, formatDate } from "@/lib/utils";
+import CareerSection from "./CareerSection";
 
 export const revalidate = 60;
 
@@ -102,6 +103,7 @@ export default async function DriverPage({ params }: { params: Promise<{ id: str
           </tbody>
         </table>
       </div>
+      <CareerSection driverId={id} driverName={`${info?.givenName ?? ""} ${info?.familyName ?? ""}`.trim()} />
     </div>
   );
 }

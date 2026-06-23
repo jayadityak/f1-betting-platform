@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import { teamColor } from "@/lib/utils";
+import RaceTelemetrySection from "./RaceTelemetrySection";
 
 export const revalidate = 60;
 
@@ -143,6 +144,8 @@ export default async function RaceDetailPage({
           </div>
         </div>
       </div>
+
+      <RaceTelemetrySection season={season} round={round} />
     </div>
   );
 }

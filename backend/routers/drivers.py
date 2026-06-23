@@ -25,6 +25,28 @@ async def driver_profile(driver_id: str):
         "races": len(results),
     }
 
+@router.get("/{driver_id}/career")
+async def driver_career(driver_id: str):
+    races = await ergast.career_results(driver_id)
+    seasons: dict = {}
+    for race in races:
+        result = race["Results"][0] if race.get("Results") else None
+        if not result:
+            continue
+        s = race["season"]
+        if s not in seasons:
+            seasons[s] = {"season": s, "races": 0, "wins": 0, "podiums": 0, "points": 0.0}
+        seasons[s]["races"] += 1
+        pos = result.get("position", "99")
+        if pos.isdigit():
+            p = int(pos)
+            if p == 1:
+                seasons[s]["wins"] += 1
+            if p <= 3:
+                seasons[s]["podiums"] += 1
+        seasons[s]["points"] += float(result.get("points", 0))
+    return sorted(seasons.values(), key=lambda x: x["season"])
+
 @router.get("/{driver_id}/circuit/{circuit_id}")
 async def driver_at_circuit(driver_id: str, circuit_id: str):
     all_races = await ergast.circuit_history(circuit_id, limit=30)

@@ -1,4 +1,5 @@
 import httpx
+import asyncio
 
 BASE = "https://api.jolpi.ca/ergast/f1"
 
@@ -61,3 +62,18 @@ async def pit_stops(season: str, round_num: str):
     data = await get(f"/{season}/{round_num}/pitstops")
     races = data["MRData"]["RaceTable"]["Races"]
     return races[0]["PitStops"] if races else []
+
+async def career_results(driver_id: str):
+    # Jolpi caps at 100 results per page — paginate to get all career races
+    first = await get(f"/drivers/{driver_id}/results?limit=100&offset=0")
+    total = int(first["MRData"].get("total", 0))
+    races = first["MRData"]["RaceTable"]["Races"]
+    if total > 100:
+        extra = await asyncio.gather(*[
+            get(f"/drivers/{driver_id}/results?limit=100&offset={off}")
+            for off in range(100, total, 100)
+        ])
+        for page in extra:
+            if isinstance(page, dict):
+                races.extend(page["MRData"]["RaceTable"]["Races"])
+    return races

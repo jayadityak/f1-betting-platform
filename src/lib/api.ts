@@ -29,6 +29,7 @@ export const api = {
   drivers: {
     all: () => get<any[]>("/drivers/"),
     profile: (id: string) => get<any>(`/drivers/${id}`),
+    career: (id: string) => get<any[]>(`/drivers/${id}/career`, 3600),
     atCircuit: (driverId: string, circuitId: string) =>
       get<any>(`/drivers/${driverId}/circuit/${circuitId}`),
   },
@@ -61,5 +62,9 @@ export const api = {
       get<any[]>(`/telemetry/speed/${year}/${gp}/${session}/${driver}`, 3600),
     sectors: (year: number, gp: string, session: string) =>
       get<any[]>(`/telemetry/sectors/${year}/${gp}/${session}`, 3600),
+    raceLaps: (year: number, round: number) =>
+      get<any[]>(`/telemetry/race/${year}/${round}/laps`, 3600),
+    trackMap: (year: number, round: number) =>
+      get<any>(`/telemetry/race/${year}/${round}/track`, 3600),
   },
 };
